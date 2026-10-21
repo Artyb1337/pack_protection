@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Pack Protection Facility Console</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: staff console. Summary strip, then a triage queue with a detail panel beside it (stacks on narrow screens) */
+:root{
+  --bg:#F2F4F3; --card:#FFFFFF; --ink:#141C19; --muted:#56635D; --line:#D9DFDB; --head:#163F33; --head-ink:#E8F2EE;
+  --brand:#1F5C4A; --brand-ink:#FFFFFF; --soft:#E3EFE9; --amber:#E8A33D;
+  --bad:#B42318; --bad-bg:#FDECEA; --warn:#8A5A00; --warn-bg:#FFF4DB; --ok:#1E6B42; --ok-bg:#E4F4EA; --shadow:rgba(20,28,25,.06);
+  --display:"Bricolage Grotesque", system-ui, sans-serif; --body:"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif; --mono:"IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1412; --card:#16201C; --ink:#EAF1ED; --muted:#9FB0A8; --line:#283530; --head:#0A231C; --head-ink:#D6E8E0;
+  --brand:#5FBF98; --brand-ink:#0C1512; --soft:#173027; --amber:#F0B65A;
+  --bad:#FF8A80; --bad-bg:#3A1714; --warn:#F5C46B; --warn-bg:#352812; --ok:#7FD6A4; --ok-bg:#143022; --shadow:rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1412; --card:#16201C; --ink:#EAF1ED; --muted:#9FB0A8; --line:#283530; --head:#0A231C; --head-ink:#D6E8E0;
+  --brand:#5FBF98; --brand-ink:#0C1512; --soft:#173027; --amber:#F0B65A;
+  --bad:#FF8A80; --bad-bg:#3A1714; --warn:#F5C46B; --warn-bg:#352812; --ok:#7FD6A4; --ok-bg:#143022; --shadow:rgba(0,0,0,.35); color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+.bar{background:var(--head);color:var(--head-ink);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px}
+.bar .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:800;font-size:1.1rem;display:flex;align-items:center;gap:10px}
+.brand small{font-family:var(--body);font-weight:400;opacity:.8;font-size:.85rem}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:700;background:transparent;color:var(--head-ink);opacity:.75;border:0;border-radius:8px;padding:8px 12px;cursor:pointer}
+.tabs button[aria-current="page"]{opacity:1;background:rgba(255,255,255,.12)}
+.main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.main .in{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1{font-family:var(--display);font-weight:800;font-size:1.5rem;margin:0}
+h2{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0}
+p{margin:0}.muted{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .n{font-family:var(--display);font-weight:800;font-size:1.8rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi .l{font-size:.82rem;color:var(--muted)}
+.kpi.alert .n{color:var(--bad)}
+.duty{display:flex;align-items:center;gap:12px;background:var(--soft);border-radius:12px;padding:12px 16px;flex-wrap:wrap}
+.duty .d{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ph{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);gap:10px;flex-wrap:wrap}
+.filters{display:flex;gap:6px}
+.filters button{font:inherit;font-size:.82rem;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:560px}
+th{text-align:left;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:10px 16px;font-weight:700}
+td{padding:12px 16px;border-top:1px solid var(--line);vertical-align:top}
+tr.r{cursor:pointer}tr.r:hover td{background:var(--bg)}tr.r.sel td{background:var(--soft)}
+.mono{font-family:var(--mono);font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.risk{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.85rem}
+.risk::before{content:"";width:9px;height:9px;border-radius:2px;background:currentColor}
+.risk.high{color:var(--bad)}.risk.med{color:var(--warn)}.risk.low{color:var(--ok)}
+.st{font-size:.75rem;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.st.new{background:var(--bad-bg);color:var(--bad)}.st.assigned{background:var(--warn-bg);color:var(--warn)}.st.resolved{background:var(--ok-bg);color:var(--ok)}
+.det{padding:16px;display:flex;flex-direction:column;gap:14px}
+.det dl{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;margin:0}
+.det dt{color:var(--muted);font-size:.85rem}.det dd{margin:0}
+.quote{background:var(--bg);border-left:3px solid var(--amber);padding:10px 12px;border-radius:0 8px 8px 0;font-size:.92rem}
+.acts{display:grid;gap:8px}
+.btn{font:inherit;font-weight:700;border-radius:10px;min-height:44px;padding:0 14px;cursor:pointer;border:0}
+.btn.p{background:var(--brand);color:var(--brand-ink)}.btn.s{background:transparent;border:2px solid var(--brand);color:var(--brand)}.btn.q{background:transparent;border:1px solid var(--line);color:var(--ink)}
+select{font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);width:100%}
+.log{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:.85rem}
+.log li{display:flex;gap:10px}
+.empty{padding:28px 16px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.res{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.bars{display:flex;flex-direction:column;gap:10px}
+.barrow{display:grid;grid-template-columns:150px 1fr 40px;gap:10px;align-items:center;font-size:.9rem}
+.track{height:12px;background:var(--bg);border-radius:6px;overflow:hidden}.fill{height:100%;background:var(--brand);border-radius:6px}
+button:focus-visible,select:focus-visible,tr.r:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.toast{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:10px;font-weight:700;max-width:calc(100% - 32px);z-index:5}
+.ver{font-family:var(--body);font-size:.72rem;font-weight:700;background:var(--head-ink);color:var(--head);border-radius:6px;padding:2px 8px}
+.bar{box-shadow:0 2px 12px var(--shadow)}
+.kpi,.panel,.res{box-shadow:0 1px 2px var(--shadow),0 6px 16px var(--shadow)}
+.kpi{position:relative;overflow:hidden}
+.kpi .spark{display:block;margin-top:8px;width:100%;height:28px}
+.kpi.alert{border-color:var(--bad);background:linear-gradient(180deg,var(--bad-bg),var(--card) 70%)}
+.duty{border:1px solid var(--line)}
+.av{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--brand);display:inline-grid;place-items:center;font-weight:700;font-size:.75rem;margin-right:10px;vertical-align:middle;flex:none}
+.rcell{display:flex;align-items:center}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+
+
+<div class="bar"><div class="in">
+  <div class="brand"><svg width="26" height="26" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 5 9v10c0 9 6.5 15.5 15 18 8.5-2.5 15-9 15-18V9L20 3z" fill="currentColor"/></svg>Pack Protection <small>Brightwater Senior Living</small><span class="ver">C</span></div>
+  <div class="tabs"><button id="t-queue" onclick="go('queue')">Triage queue</button><button id="t-res" onclick="go('res')">Residents</button><button id="t-rep" onclick="go('rep')">Monthly report</button></div>
+</div></div>
+<div class="main"><div class="in" id="app"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const STAFF=["Marcus Lee (front desk)","Rita Gomez (resident services)","James Smith (financial services)"];
+const EV=[
+ {id:"PP-1042",res:"Deanna Bovo",room:"214",type:"Voice clone call",risk:"high",time:"2:14 pm",status:"new",ch:"Phone",
+  sum:"Caller used a cloned voice of a Medicare rep and asked for her Medicare ID. Blocked before ringing.",quote:"\"This is Medicare. Your benefits will lapse today unless you verify your number.\"",family:"Clarence Bovo (son)",log:[["2:14 pm","Call blocked automatically"],["2:14 pm","Son notified per resident's choice"]]},
+ {id:"PP-1041",res:"Harold Kim",room:"118",type:"Gift card request",risk:"high",time:"1:52 pm",status:"new",ch:"Text",
+  sum:"Text claiming to be his granddaughter asked for $1,500 in Apple gift cards. Resident opened the message twice.",quote:"\"Papa please dont tell anyone, I need gift cards today\"",family:"None on file",log:[["1:52 pm","Text flagged and warning shown"],["1:58 pm","Resident reopened message"]]},
+ {id:"PP-1039",res:"Lorraine Wells",room:"305",type:"Fake bank link",risk:"med",time:"11:20 am",status:"assigned",owner:STAFF[1],ch:"Email",
+  sum:"Email styled as her credit union with a login link to a look-alike domain. Link was disabled.",quote:"\"Unusual sign-in detected. Confirm your identity within 24 hours.\"",family:"Anne Wells (daughter)",log:[["11:20 am","Link disabled"],["11:31 am","Assigned to Rita Gomez"]]},
+ {id:"PP-1036",res:"Walter Price",room:"122",type:"Tech support pop-up",risk:"med",time:"9:05 am",status:"new",ch:"iPad browser",
+  sum:"Pop-up told him his iPad was infected and to call a number. Page was blocked.",quote:"\"WARNING: Virus detected. Call Apple Support now.\"",family:"Sam Price (son)",log:[["9:05 am","Page blocked"]]},
+ {id:"PP-1031",res:"Deanna Bovo",room:"214",type:"Fake package text",risk:"low",time:"Yesterday",status:"resolved",owner:STAFF[0],ch:"Text",
+  sum:"USPS redelivery fee scam. Resident saw the warning and did not tap.",quote:"\"Your package is on hold. Pay $3.99 to reschedule.\"",family:"Clarence Bovo (son)",log:[["Yesterday","Warning shown"],["Yesterday","Resolved: no action needed"]]}
+];
+const RES=[["Deanna Bovo","214","Enrolled","Son"],["Harold Kim","118","Enrolled","None"],["Lorraine Wells","305","Enrolled","Daughter"],["Walter Price","122","Enrolled","Son"],["Ruth Okafor","210","Invited","Niece"],["George Alvarez","301","Declined","Wife"]];
+let tab="queue",filter="open",sel="PP-1042";
+const $=s=>document.querySelector(s);
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,2600)}
+function go(t){tab=t;["queue","res","rep"].forEach(k=>$("#t-"+k).setAttribute("aria-current",k===t?"page":"false"));({queue,res,rep})[t]()}
+const stLabel={new:"New",assigned:"Assigned",resolved:"Resolved"},rLabel={high:"High",med:"Medium",low:"Low"};
+
+function queue(){
+ const open=EV.filter(e=>e.status!=="resolved");
+ const list=EV.filter(e=>filter==="all"||(filter==="open"?e.status!=="resolved":e.risk==="high"&&e.status!=="resolved"));
+ if(!list.find(e=>e.id===sel)&&list.length)sel=list[0].id;
+ $("#app").innerHTML=`<div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap"><div><h1>Today's scam activity</h1><p class="muted">Tuesday, Oct 20 · 112 residents protected</p></div></div>
+ <div class="kpis">
+  <div class="kpi alert"><div class="n">${open.filter(e=>e.status==="new").length}</div><div class="l">Need a staff decision</div></div>
+  <div class="kpi"><div class="n">${EV.length+32}</div><div class="l">Scams stopped this week</div><svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22 L16 18 L33 20 L50 12 L66 15 L83 8 L100 5 L100 28 L0 28Z" fill="var(--soft)"/><path d="M0 22 L16 18 L33 20 L50 12 L66 15 L83 8 L100 5" fill="none" stroke="var(--brand)" stroke-width="2" vector-effect="non-scaling-stroke"/></svg></div>
+  <div class="kpi"><div class="n">$41,300</div><div class="l">Money at risk stopped, last 30 days</div></div>
+  <div class="kpi"><div class="n">4 min</div><div class="l">Median time to staff response</div></div></div>
+ <div class="duty"><span class="d"></span><p><b>On duty now:</b> Marcus Lee, front desk, until 11 pm. After hours, alerts go to the night supervisor.</p></div>
+ <div class="grid">
+  <div class="panel"><div class="ph"><h2>Triage queue</h2><div class="filters" role="group" aria-label="Filter">
+   ${[["open","Open"],["high","High risk"],["all","All"]].map(([v,l])=>`<button aria-pressed="${filter===v}" onclick="filter='${v}';queue()">${l}</button>`).join("")}</div></div>
+   ${list.length?`<div class="tbl"><table><thead><tr><th>Resident</th><th>Event</th><th>Risk</th><th>Time</th><th>Status</th></tr></thead><tbody>
+   ${list.map(e=>`<tr class="r ${e.id===sel?"sel":""}" tabindex="0" onclick="sel='${e.id}';queue()" onkeydown="if(event.key==='Enter'){sel='${e.id}';queue()}"><td><div class="rcell"><span class="av">${e.res.split(" ").map(w=>w[0]).join("")}</span><div><b>${e.res}</b><br><span class="mono">Rm ${e.room}</span></div></div></td><td>${e.type}<br><span class="mono">${e.ch}</span></td><td><span class="risk ${e.risk}">${rLabel[e.risk]}</span></td><td class="mono">${e.time}</td><td><span class="st ${e.status}">${stLabel[e.status]}</span></td></tr>`).join("")}
+   </tbody></table></div>`:`<p class="empty">Queue is clear. New events appear here as they happen.</p>`}</div>
+  <div class="panel" id="det">${detail()}</div></div>`;
+}
+function detail(){const e=EV.find(x=>x.id===sel);if(!e)return`<p class="empty">Select an event to see details.</p>`;
+ return`<div class="ph"><h2>${e.res} · Rm ${e.room}</h2><span class="mono">${e.id}</span></div><div class="det">
+ <p>${e.sum}</p><div class="quote">${e.quote}</div>
+ <dl><dt>Channel</dt><dd>${e.ch}</dd><dt>Risk</dt><dd><span class="risk ${e.risk}">${rLabel[e.risk]}</span></dd><dt>Family contact</dt><dd>${e.family}</dd><dt>Owner</dt><dd>${e.owner||"Unassigned"}</dd></dl>
+ ${e.status!=="resolved"?`<div class="acts">
+  <label for="who" class="muted" style="font-size:.85rem">Assign a staff member to check in</label>
+  <select id="who">${STAFF.map(s=>`<option ${e.owner===s?"selected":""}>${s}</option>`).join("")}</select>
+  <button class="btn p" onclick="assign()">Assign check-in</button>
+  ${e.family!=="None on file"?`<button class="btn s" onclick="notify()">Notify ${e.family.split(" (")[0]}</button>`:""}
+  <button class="btn q" onclick="resolve()">Resolve: no action needed</button></div>`:`<p class="st resolved" style="align-self:flex-start">Resolved</p>`}
+ <div><p class="muted" style="font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Activity</p><ul class="log">${e.log.map(([t,m])=>`<li><span class="mono">${t}</span><span>${m}</span></li>`).join("")}</ul></div></div>`}
+function now(){return new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}).toLowerCase()}
+function assign(){const e=EV.find(x=>x.id===sel);e.owner=$("#who").value;e.status="assigned";e.log.push([now(),"Assigned to "+e.owner.split(" (")[0]]);toast("Check-in assigned to "+e.owner.split(" (")[0]);queue()}
+function notify(){const e=EV.find(x=>x.id===sel);e.log.push([now(),"Family contact notified"]);toast(e.family.split(" (")[0]+" was notified (sample)");queue()}
+function resolve(){const e=EV.find(x=>x.id===sel);e.status="resolved";e.log.push([now(),"Resolved: no action needed"]);toast("Resolved");queue()}
+
+function res(){$("#app").innerHTML=`<h1>Residents</h1><p class="muted">Each resident opts in and chooses who hears about blocked scams. 4 of 6 shown are enrolled.</p>
+ <div class="cards">${RES.map(([n,r,s,f])=>`<div class="res"><b>${n}</b><span class="mono">Room ${r}</span><span>Family contact: ${f}</span>
+ <span class="st ${s==="Enrolled"?"resolved":s==="Invited"?"assigned":"new"}" style="align-self:flex-start">${s}</span>
+ ${s!=="Enrolled"?`<button class="btn q" onclick="this.outerHTML='<span class=muted>Enrollment visit booked for Thursday (sample)</span>'">Book enrollment visit</button>`:""}</div>`).join("")}</div>`}
+
+function rep(){const cats=[["Impostor calls",14],["Gift card requests",9],["Fake delivery texts",8],["Fake bank links",5],["Tech support pop-ups",3]];const m=Math.max(...cats.map(c=>c[1]));
+ $("#app").innerHTML=`<h1>September report</h1><p class="muted">Ready to share with leadership and the resident council.</p>
+ <div class="kpis"><div class="kpi"><div class="n">39</div><div class="l">Scams stopped</div></div><div class="kpi"><div class="n">$0</div><div class="l">Resident losses reported</div></div><div class="kpi"><div class="n">$41,300</div><div class="l">Money at risk stopped</div></div><div class="kpi"><div class="n">94%</div><div class="l">Of residents enrolled</div></div></div>
+ <div class="panel"><div class="ph"><h2>What's targeting your residents</h2></div><div class="det"><div class="bars">${cats.map(([l,v])=>`<div class="barrow"><span>${l}</span><div class="track"><div class="fill" style="width:${v/m*100}%"></div></div><span class="mono">${v}</span></div>`).join("")}</div></div></div>
+ <p class="muted">Before Pack Protection, Brightwater reported 3 resident fraud losses in the first half of 2026, including one for $12,000.</p>`}
+go("queue");
+</script>
+
+</body>
+</html>

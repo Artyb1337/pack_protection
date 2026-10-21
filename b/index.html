@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Pack Protection Family Circle</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Layout: phone app. On wide screens it sits inside a device frame; on phones it fills the screen */
+:root{
+  --bg:#E7EBEF; --screen:#F3F5F7; --card:#FFFFFF; --ink:#18202A; --muted:#55606D; --line:#DDE2E8; --frame:#1B2128;
+  --brand:#1F5C4A; --brand2:#2F7A62; --brand-ink:#FFFFFF; --soft:#E2EFE9; --amber:#E8A33D;
+  --bad:#B42318; --bad-bg:#FDECEA; --warn:#8A5A00; --warn-bg:#FFF4DB; --ok:#1E6B42; --ok-bg:#E4F4EA; --shadow:rgba(24,32,42,.08);
+  --display:"Bricolage Grotesque", system-ui, sans-serif; --body:"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B0F13; --screen:#0F141A; --card:#18202A; --ink:#ECF0F4; --muted:#A3AEBB; --line:#2B3542; --frame:#2A323C;
+  --brand:#5FBF98; --brand2:#3E9C78; --brand-ink:#0C1512; --soft:#173027; --amber:#F0B65A;
+  --bad:#FF8A80; --bad-bg:#3A1714; --warn:#F5C46B; --warn-bg:#352812; --ok:#7FD6A4; --ok-bg:#143022; --shadow:rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B0F13; --screen:#0F141A; --card:#18202A; --ink:#ECF0F4; --muted:#A3AEBB; --line:#2B3542; --frame:#2A323C;
+  --brand:#5FBF98; --brand2:#3E9C78; --brand-ink:#0C1512; --soft:#173027; --amber:#F0B65A;
+  --bad:#FF8A80; --bad-bg:#3A1714; --warn:#F5C46B; --warn-bg:#352812; --ok:#7FD6A4; --ok-bg:#143022; --shadow:rgba(0,0,0,.4); color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.device{height:100%;display:flex;flex-direction:column;background:var(--screen);overflow:hidden}
+.scroll{flex:1;overflow-y:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 24px}
+.app{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+@media (min-width:620px) and (min-height:700px){
+  body{display:grid;place-items:center;padding-block:24px;box-sizing:border-box}
+  .device{width:400px;height:min(840px,100%);border:12px solid var(--frame);border-radius:48px;box-shadow:0 30px 60px var(--shadow),0 0 0 1px var(--line);position:relative}
+  .device::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:110px;height:28px;border-radius:20px;background:var(--frame);z-index:3}
+  .scroll{padding-top:48px}
+}
+h1{font-family:var(--display);font-weight:800;font-size:1.55rem;margin:0;line-height:1.15;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0}
+p{margin:0}.muted{color:var(--muted)}
+.ver{font-size:.72rem;font-weight:700;background:var(--soft);color:var(--brand);border-radius:6px;padding:2px 8px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brandline{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:800;color:var(--brand)}
+.hero{background:linear-gradient(135deg,var(--brand),var(--brand2));color:var(--brand-ink);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 24px var(--shadow)}
+.hero .who{display:flex;align-items:center;gap:12px}
+.av{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-family:var(--display);font-weight:800;flex:none}
+.hero h1{color:inherit}
+.hero .sub{opacity:.85;font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:rgba(255,255,255,.14);border-radius:12px;padding:10px}
+.stat b{display:block;font-family:var(--display);font-size:1.35rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:.75rem;opacity:.9}
+.sec{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:10px}
+.alert{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%;box-shadow:0 2px 8px var(--shadow)}
+.alert:hover{border-color:var(--brand)}
+.ai{width:40px;height:40px;border-radius:12px;display:grid;place-items:center}
+.ai.high{background:var(--bad-bg);color:var(--bad)}.ai.med{background:var(--warn-bg);color:var(--warn)}.ai.low{background:var(--ok-bg);color:var(--ok)}
+.alert .t{font-weight:700;line-height:1.3}
+.alert .time{font-size:.8rem;color:var(--muted);white-space:nowrap}
+.pill{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:4px}
+.pill.open{background:var(--bad-bg);color:var(--bad)}.pill.done{background:var(--ok-bg);color:var(--ok)}.pill.info{background:var(--soft);color:var(--brand)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 8px var(--shadow)}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:8px 12px}
+.kv dt{color:var(--muted);font-size:.88rem}.kv dd{margin:0}
+.btn{font:inherit;font-weight:700;border-radius:14px;min-height:50px;padding:0 18px;cursor:pointer;border:0;width:100%}
+.btn.p{background:var(--brand);color:var(--brand-ink)}
+.btn.s{background:transparent;color:var(--brand);border:2px solid var(--brand)}
+.btn.q{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.stack{display:flex;flex-direction:column;gap:10px}
+.back{background:none;border:0;font:inherit;font-weight:700;color:var(--brand);padding:6px 0;cursor:pointer;align-self:flex-start}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.split ul{margin:6px 0 0;padding-left:1.1em;font-size:.88rem;display:flex;flex-direction:column;gap:4px}
+.can{background:var(--ok-bg);border-radius:12px;padding:12px}.cant{background:var(--bad-bg);border-radius:12px;padding:12px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px;border:2px solid var(--line);border-radius:14px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--brand);background:var(--soft)}
+.opt input{margin-top:4px;accent-color:var(--brand);width:18px;height:18px}
+.price{font-family:var(--display);font-weight:800;font-size:2.6rem;line-height:1}
+.price span{font-size:1rem;font-weight:600;color:var(--muted)}
+.ticks{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.ticks li::before{content:"\2713";color:var(--brand);font-weight:800;margin-right:10px}
+nav{background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+nav .in{max-width:440px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+nav button{font:inherit;font-size:.78rem;font-weight:700;background:none;border:0;color:var(--muted);padding:10px 4px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+nav button[aria-current="page"]{color:var(--brand)}
+nav .badge{position:absolute;top:6px;left:calc(50% + 6px);background:var(--bad);color:var(--card);border-radius:999px;font-size:.65rem;padding:0 6px;line-height:1.5}
+button:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:700;max-width:calc(100% - 32px);z-index:5}
+.done-ic{width:64px;height:64px;border-radius:50%;background:var(--ok-bg);color:var(--ok);display:grid;place-items:center}
+</style>
+</head>
+<body>
+
+
+<div class="device">
+  <div class="scroll" id="scroll"><div class="app" id="app"></div></div>
+  <nav aria-label="Main"><div class="in">
+    <button id="t-alerts" onclick="go('alerts')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>Alerts<span id="badge"></span></button>
+    <button id="t-mom" onclick="go('mom')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Mom's settings</button>
+    <button id="t-plan" onclick="go('plan')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/></svg>Plan</button>
+  </div></nav>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const ALERTS=[
+ {id:1,sev:"high",title:"Blocked a spoofed Medicare call",time:"Today, 2:14 pm",status:"open",
+  what:"A call claiming to be Medicare used a cloned voice and a spoofed 800 number. It matched a known scam script asking for her Medicare number.",
+  saw:"Nothing. The call was stopped before her phone rang.",did:"Blocked the number and added it to the Pack watch list.",money:"None at risk"},
+ {id:2,sev:"med",title:"Warned Mom about a fake package text",time:"Today, 9:40 am",status:"open",
+  what:"A text said a USPS package was on hold and linked to usps-redelivery-fee.info.",
+  saw:"A yellow warning: \"This link looks fake. Don't tap it.\" She closed it.",did:"Showed the warning. She did not tap the link.",money:"$3.99 fake fee, and card details"},
+ {id:3,sev:"low",title:"Mom checked a message herself",time:"Yesterday, 4:05 pm",status:"done",
+  what:"She used Check It on a pharmacy refill text.",saw:"A green result: \"This looks okay.\"",did:"Nothing needed.",money:"None"},
+ {id:4,sev:"high",title:"Blocked a \"grandson in jail\" text",time:"Oct 17, 7:22 pm",status:"done",
+  what:"A text from a new number claimed to be her grandson asking for $2,500 in gift cards for bail.",
+  saw:"Nothing. The text was filtered to a Scams folder.",did:"Filtered it and flagged the sender.",money:"$2,500"}
+];
+const IC={call:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+ msg:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+ ok:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 12 4 4 8-8"/></svg>'};
+const icFor=a=>a.sev==="low"?IC.ok:/call/i.test(a.title)?IC.call:IC.msg;
+let tab="alerts",level="money";
+const $=s=>document.querySelector(s);
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,2600)}
+function badge(){const n=ALERTS.filter(a=>a.status==="open").length;$("#badge").innerHTML=n?`<span class="badge">${n}</span>`:""}
+function show(html){$("#app").innerHTML=html;$("#scroll").scrollTop=0}
+function go(t){tab=t;["alerts","mom","plan"].forEach(k=>$("#t-"+k).setAttribute("aria-current",k===t?"page":"false"));({alerts,mom,plan})[t]();badge()}
+const TOPBAR=`<div class="top"><span class="brandline"><svg width="22" height="22" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 5 9v10c0 9 6.5 15.5 15 18 8.5-2.5 15-9 15-18V9L20 3z" fill="currentColor"/></svg>Pack Protection</span><span class="ver">B</span></div>`;
+
+function alerts(){
+ const open=ALERTS.filter(a=>a.status==="open"),past=ALERTS.filter(a=>a.status!=="open");
+ const row=a=>`<button class="alert" onclick="detail(${a.id})"><span class="ai ${a.sev}">${icFor(a)}</span><span><span class="t">${a.title}</span><br><span class="pill ${a.status==="open"?"open":a.sev==="low"?"info":"done"}">${a.status==="open"?"Needs a look":a.sev==="low"?"For your info":"Handled"}</span></span><span class="time">${a.time.replace("Today, ","")}</span></button>`;
+ show(`${TOPBAR}
+ <div class="hero"><div class="who"><div class="av">DB</div><div><h1>Mom is protected</h1><p class="sub">Deanna Bovo · iPhone and iPad</p></div></div>
+  <div class="stats"><div class="stat"><b>${ALERTS.filter(a=>a.sev!=="low").length}</b><span>Scams stopped this week</span></div><div class="stat"><b>$0</b><span>Lost since joining</span></div><div class="stat"><b>48</b><span>Days protected</span></div></div></div>
+ <p class="sec">Needs a look (${open.length})</p>
+ <div class="list">${open.length?open.map(row).join(""):`<p class="muted">You're all caught up.</p>`}</div>
+ <p class="sec">Earlier</p><div class="list">${past.map(row).join("")}</div>`);
+}
+function detail(id){const a=ALERTS.find(x=>x.id===id);
+ show(`<button class="back" onclick="go('alerts')">&larr; All alerts</button>
+ <div style="display:flex;gap:12px;align-items:center"><span class="ai ${a.sev}" style="width:48px;height:48px">${icFor(a)}</span><div><h1>${a.title}</h1><p class="muted">${a.time}</p></div></div>
+ <div class="card"><dl class="kv"><dt>What happened</dt><dd>${a.what}</dd><dt>What Mom saw</dt><dd>${a.saw}</dd><dt>What we did</dt><dd>${a.did}</dd><dt>Money at risk</dt><dd><b>${a.money}</b></dd></dl></div>
+ ${a.status==="open"?`<div class="stack"><button class="btn p" onclick="act(${id},'call')">I'll call Mom</button><button class="btn s" onclick="act(${id},'done')">Mark as handled</button><button class="btn q" onclick="act(${id},'less')">Show me fewer alerts like this</button></div>`
+ :`<p class="pill done" style="align-self:flex-start">Handled</p>`}
+ <p class="muted" style="font-size:.85rem">You see what was blocked or flagged. You never see Mom's messages, contacts, or bank details.</p>`)}
+function act(id,k){const a=ALERTS.find(x=>x.id===id);
+ if(k==="call"){show(`<button class="back" onclick="detail(${id})">&larr; Back</button><h1>Calling Mom</h1>
+  <div class="card"><p class="sec">Deanna's number</p><p style="font-family:var(--display);font-weight:800;font-size:1.8rem;user-select:all">(410) 555-0187</p>
+  <p class="muted">Try this: "Hi Mom, Pack stopped a fake Medicare call today. Nothing to worry about. Just a reminder Medicare won't call you asking for your number."</p></div>
+  <button class="btn p" onclick="act(${id},'done')">Done, mark as handled</button>`);return}
+ a.status="done";badge();toast(k==="less"?"Got it. We'll only alert you when money is at risk.":"Marked as handled");if(k==="less")level="money";go("alerts")}
+
+function mom(){show(`${TOPBAR}<h1>Mom's settings</h1>
+ <div class="card"><h2>What you can and can't see</h2><p class="muted">Mom agreed to this on Sept 2. She can change it anytime from her phone.</p>
+  <div class="split"><div class="can"><b>You can see</b><ul><li>Blocked calls and texts</li><li>Warnings she got</li><li>Money that was at risk</li></ul></div>
+  <div class="cant"><b>You can't see</b><ul><li>Her messages</li><li>Her contacts or photos</li><li>Her bank or Medicare info</li></ul></div></div></div>
+ <div class="card"><h2>When should we alert you?</h2>
+  ${[["money","Only when money is at risk","Fewer alerts. Recommended."],["all","Every scam we block","You'll hear about everything."],["weekly","Weekly summary only","One message every Sunday."]].map(([v,t,s])=>`<label class="opt"><input type="radio" name="lvl" id="lvl-${v}" value="${v}" ${level===v?"checked":""} onchange="level=this.value;toast('Saved')"><span><b>${t}</b><br><span class="muted">${s}</span></span></label>`).join("")}</div>
+ <div class="card"><h2>Who else gets alerts</h2><p><b>Brightwater front desk</b><br><span class="muted">Backup when you don't respond in 15 minutes</span></p>
+  <button class="btn s" onclick="toast('Invite sent to your sister (sample)')">Add a family member</button></div>`)}
+
+function plan(){show(`${TOPBAR}<h1>Keep Mom protected</h1><p class="muted">Free trial ends Nov 2.</p>
+ <div class="card"><p class="sec">Family plan</p><p class="price">$9<span> / month</span></p>
+ <ul class="ticks"><li>Scam call and text blocking on Mom's devices</li><li>Alerts to you and up to 3 family members</li><li>AI voice clone detection</li><li>Live help line for Mom, 24/7</li></ul>
+ <button class="btn p" onclick="buy()">Keep the family plan</button><button class="btn q" onclick="toast('Thanks. That helps us learn what to change.')">Not right now</button></div>`)}
+function buy(){show(`<div class="card" style="align-items:flex-start"><span class="done-ic">${IC.ok.replace('width="20" height="20"','width="32" height="32"')}</span><h1>You're all set</h1><p>Mom stays protected after Nov 2. This is a prototype, so no card was charged.</p><button class="btn p" onclick="go('alerts')">Back to alerts</button></div>`)}
+go("alerts");
+</script>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Pack Protection Check It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Layout: one column, one decision per screen, oversized targets for a 50+ reader */
+:root{
+  --bg:#F4F6F2; --card:#FFFFFF; --ink:#16211D; --muted:#4A5953; --line:#D3DBD5;
+  --brand:#1F5C4A; --brand-ink:#FFFFFF; --amber:#E8A33D;
+  --bad:#A8231B; --bad-bg:#FBE9E7; --warn:#8A5A00; --warn-bg:#FFF3D6; --ok:#1E6B42; --ok-bg:#E3F3E9;
+  --display:"Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --scale:1; --glow:#D9ECE3; --shadow:rgba(22,33,29,.07);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101714; --card:#18221E; --ink:#EEF3EF; --muted:#A9B8B1; --line:#2C3A34;
+  --brand:#5FBF98; --brand-ink:#0C1512; --amber:#F0B65A;
+  --bad:#FF8A80; --bad-bg:#3A1714; --warn:#F5C46B; --warn-bg:#352812; --ok:#7FD6A4; --ok-bg:#143022; --glow:#17322A; --shadow:rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101714; --card:#18221E; --ink:#EEF3EF; --muted:#A9B8B1; --line:#2C3A34;
+  --brand:#5FBF98; --brand-ink:#0C1512; --amber:#F0B65A;
+  --bad:#FF8A80; --bad-bg:#3A1714; --warn:#F5C46B; --warn-bg:#352812; --ok:#7FD6A4; --ok-bg:#143022; --glow:#17322A; --shadow:rgba(0,0,0,.35); color-scheme:dark}
+html{font-size:calc(19px * var(--scale))}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.1rem;color:var(--brand)}
+.logo svg{width:34px;height:34px}
+.size{display:flex;gap:6px}
+.size button{font:inherit;font-weight:700;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;min-width:52px;min-height:48px;cursor:pointer}
+.size button[aria-pressed="true"]{border-color:var(--brand);color:var(--brand)}
+h1{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1.15;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:1.4rem;margin:0;text-wrap:balance}
+p{margin:0}
+.lead{font-size:1.1rem;color:var(--muted)}
+.big{display:flex;align-items:center;gap:18px;width:100%;text-align:left;font:inherit;font-size:1.2rem;font-weight:700;
+  background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:18px;padding:22px 20px;cursor:pointer}
+.big:hover,.big:focus-visible{border-color:var(--brand)}
+.big .ic{flex:none;width:56px;height:56px;border-radius:14px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center}
+.big small{display:block;font-weight:400;font-size:.95rem;color:var(--muted);margin-top:2px}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.primary{font:inherit;font-weight:700;font-size:1.15rem;background:var(--brand);color:var(--brand-ink);border:0;border-radius:14px;min-height:60px;padding:0 24px;cursor:pointer;width:100%}
+.ghost{font:inherit;font-weight:700;font-size:1.05rem;background:transparent;color:var(--brand);border:2px solid var(--brand);border-radius:14px;min-height:56px;padding:0 20px;cursor:pointer;width:100%}
+.back{font:inherit;font-weight:700;background:none;border:0;color:var(--brand);font-size:1.05rem;padding:8px 0;cursor:pointer;align-self:flex-start;min-height:48px}
+textarea{width:100%;box-sizing:border-box;min-height:170px;font:inherit;font-size:1.1rem;padding:16px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);resize:vertical}
+.label{font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font:inherit;font-size:.95rem;background:var(--card);color:var(--ink);border:2px dashed var(--line);border-radius:999px;padding:10px 16px;cursor:pointer;min-height:48px}
+.q{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:18px}
+.q .count{color:var(--muted);font-weight:700;font-size:.95rem;letter-spacing:.04em;text-transform:uppercase}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.yn button{font:inherit;font-weight:700;font-size:1.25rem;min-height:72px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.yn button:hover{border-color:var(--brand)}
+.verdict{border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px;border:3px solid}
+.verdict.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--ink)}
+.verdict.warn{background:var(--warn-bg);border-color:var(--warn)}
+.verdict.ok{background:var(--ok-bg);border-color:var(--ok)}
+.verdict .tag{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1.1}
+.verdict.bad .tag{color:var(--bad)} .verdict.warn .tag{color:var(--warn)} .verdict.ok .tag{color:var(--ok)}
+.reasons{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
+.todo{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;font-size:1.1rem}
+.helper{background:var(--card);border:2px solid var(--brand);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:6px}
+.phone{font-family:var(--display);font-weight:800;font-size:2rem;color:var(--brand);font-variant-numeric:tabular-nums;user-select:all}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:14px 22px;border-radius:12px;font-weight:700;max-width:calc(100% - 32px)}
+body{background:radial-gradient(120% 60% at 50% -10%,var(--glow),transparent 70%) no-repeat,var(--bg)}
+.ver{font-family:var(--body);font-size:.75rem;font-weight:700;background:var(--brand);color:var(--brand-ink);border-radius:6px;padding:2px 8px;margin-left:4px}
+.eyebrow{font-weight:700;color:var(--brand);letter-spacing:.06em;text-transform:uppercase;font-size:.85rem}
+.big{box-shadow:0 1px 2px var(--shadow),0 6px 18px var(--shadow);transition:transform .15s,border-color .15s}
+.big:hover{transform:translateY(-2px)}
+.big .arrow{margin-left:auto;color:var(--brand);font-size:1.6rem;flex:none}
+.q,.todo,.helper,textarea{box-shadow:0 6px 18px var(--shadow)}
+.vhead{display:flex;align-items:center;gap:16px}
+.vicon{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:var(--card)}
+.verdict.bad .vicon{background:var(--bad)}.verdict.warn .vicon{background:var(--warn)}.verdict.ok .vicon{background:var(--ok)}
+.trust{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:.95rem}
+.trust svg{flex:none;color:var(--ok)}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1 1 200px}
+@media (prefers-reduced-motion:no-preference){.screen{animation:in .25s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="logo"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 5 9v10c0 9 6.5 15.5 15 18 8.5-2.5 15-9 15-18V9L20 3z" fill="var(--brand)"/><path d="m13 20 5 5 9-10" stroke="var(--brand-ink)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Pack Protection<span class="ver" aria-label="Version A">A</span></div>
+    <div class="size" role="group" aria-label="Text size">
+      <button id="s1" aria-pressed="true" onclick="setSize(1)">A</button>
+      <button id="s2" aria-pressed="false" onclick="setSize(1.18)" style="font-size:1.2em">A</button>
+    </div>
+  </header>
+  <main id="app"></main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const HELPER={name:"Front desk, Brightwater",phone:"(410) 555-0142",note:"Open every day, 24 hours"};
+const EXAMPLES=[
+ {label:"Medicare card text",text:"MEDICARE ALERT: Your benefits will be suspended today. Verify your Medicare number and bank account now at medicare-renewal-help.com or call 1-888-555-0199."},
+ {label:"Grandson in trouble",text:"Grandma its me Tyler. I got in a car accident and Im in jail. Please dont tell mom. I need $2,500 for bail. Can you get Target gift cards and send me the numbers?"},
+ {label:"Pharmacy refill",text:"CVS Pharmacy: Your prescription is ready for pickup at 1200 West St. Reply STOP to opt out."}
+];
+const RULES=[
+ {re:/gift ?cards?|itunes|google play|wire|zelle|bitcoin|crypto|western union/i,why:"It asks you to pay with gift cards, wire transfer, or crypto. Real companies and courts never ask for that.",w:3},
+ {re:/don'?t tell|keep (this|it) (a )?secret|between us/i,why:"It asks you to keep it secret. Scammers do this so no one can warn you.",w:3},
+ {re:/suspend|locked|today|immediately|urgent|right now|act now|final notice|within 24/i,why:"It rushes you. Scammers create panic so you act before you think.",w:2},
+ {re:/verify|confirm your|social security|ssn|medicare number|bank account|account number|password|pin\b/i,why:"It asks for private numbers like Medicare, Social Security, or bank details.",w:3},
+ {re:/jail|bail|accident|arrest|hospital/i,why:"It tells a story about a loved one in trouble. This is a common family emergency scam.",w:2},
+ {re:/(https?:\/\/|www\.)?[a-z0-9-]+\.(com|net|info|xyz|co)\b/i,why:"It includes a website link. Links in surprise messages often go to fake sites.",w:1},
+ {re:/won|winner|prize|lottery|sweepstakes|refund/i,why:"It promises money or a prize you did not expect.",w:2},
+ {re:/its me|it'?s me|new number/i,why:"Someone says they are family but from an unknown number.",w:2}
+];
+const CALLQ=[
+ {q:"Did the caller ask you to pay money, buy gift cards, or send a wire transfer?",w:3,why:"The caller asked for an unusual payment."},
+ {q:"Did they say it was urgent, or that you would be in trouble if you waited?",w:2,why:"The caller pressured you to act fast."},
+ {q:"Did they ask for your Medicare, Social Security, or bank number?",w:3,why:"The caller asked for private numbers."},
+ {q:"Did they ask you to keep the call a secret from family or staff?",w:3,why:"The caller asked you to keep it secret."},
+ {q:"Did the voice say it was a family member, but something felt off?",w:2,why:"Voices can now be copied with AI. A familiar voice is no longer proof."}
+];
+const $=s=>document.querySelector(s);
+let lastSource="text";
+function setSize(v){document.documentElement.style.setProperty("--scale",v);$("#s1").setAttribute("aria-pressed",v===1);$("#s2").setAttribute("aria-pressed",v!==1);try{localStorage.setItem("pp-size",v)}catch(e){}}
+try{const s=parseFloat(localStorage.getItem("pp-size"));if(s)setSize(s)}catch(e){}
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,2600)}
+function render(html){$("#app").innerHTML='<div class="screen wrap" style="padding:0">'+html+'</div>';window.scrollTo(0,0);const f=$("#app h1,#app h2");if(f){f.tabIndex=-1;f.focus({preventScroll:true})}}
+const icon={msg:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+ call:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+ person:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'};
+
+function greet(){const h=new Date().getHours();return h<12?"Good morning":h<17?"Good afternoon":"Good evening"}
+const arrow='<span class="arrow" aria-hidden="true">&rsaquo;</span>';
+function home(){render(`
+ <p class="eyebrow">${greet()}, Deanna</p>
+ <h1>Got a message or call that feels off?</h1>
+ <p class="lead">Check it here first. You decide what to do next.</p>
+ <button class="big" onclick="textScreen()"><span class="ic">${icon.msg}</span><span>Check a text or email<small>Paste or type what it says</small></span>${arrow}</button>
+ <button class="big" onclick="callScreen(0,[])"><span class="ic">${icon.call}</span><span>Check a phone call<small>Answer five yes or no questions</small></span>${arrow}</button>
+ <button class="big" onclick="helperScreen()"><span class="ic">${icon.person}</span><span>Talk to a real person<small>${HELPER.name}</small></span>${arrow}</button>
+ <p class="trust"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>What you check stays private. Nobody else sees it.</p>`)}
+
+function textScreen(){render(`
+ <button class="back" onclick="home()">&larr; Back</button>
+ <h2>What does the message say?</h2>
+ <label class="label" for="msg">Paste or type it here</label>
+ <textarea id="msg" placeholder="Example: Your account is locked. Call this number now."></textarea>
+ <p class="label">No message handy? Try one of these:</p>
+ <div class="chips">${EXAMPLES.map((e,i)=>`<button class="chip" onclick="document.getElementById('msg').value=EXAMPLES[${i}].text">${e.label}</button>`).join("")}</div>
+ <button class="primary" onclick="checkText()">Check this message</button>`)}
+
+function checkText(){const t=$("#msg").value.trim();if(!t){toast("Type or paste the message first");$("#msg").focus();return}
+ let score=0,why=[];RULES.forEach(r=>{if(r.re.test(t)){score+=r.w;why.push(r.why)}});lastSource="text";verdict(score,why)}
+
+function callScreen(i,answers){
+ if(i>=CALLQ.length){let s=0,w=[];answers.forEach((a,k)=>{if(a){s+=CALLQ[k].w;w.push(CALLQ[k].why)}});lastSource="call";return verdict(s,w)}
+ render(`<button class="back" onclick="${i?`callScreen(${i-1},${JSON.stringify(answers.slice(0,-1))})`:"home()"}">&larr; Back</button>
+ <div class="q"><span class="count">Question ${i+1} of ${CALLQ.length}</span><h2>${CALLQ[i].q}</h2>
+ <div class="yn"><button onclick='callScreen(${i+1},${JSON.stringify([...answers,true])})'>Yes</button><button onclick='callScreen(${i+1},${JSON.stringify([...answers,false])})'>No</button></div></div>`)}
+
+function verdict(score,why){
+ const level=score>=4?"bad":score>=2?"warn":"ok";
+ const tag={bad:"This looks like a scam.",warn:"Be careful with this one.",ok:"This looks okay."}[level];
+ const steps={bad:lastSource==="call"?["Hang up if they call again.","Do not send money or numbers.","Call your helper below to talk it over."]:["Do not reply.","Do not tap any links.","Delete it, or show it to your helper."],
+  warn:["Do not act on it yet.","Call the company using the number on your card or bill, not the one in the message.","Ask your helper if you are unsure."],
+  ok:["You can go ahead as usual.","If anything changes, like a request for money, check again."]}[level];
+ const vi={bad:'<path d="M12 7v6M12 17h.01"/>',warn:'<path d="M12 7v6M12 17h.01"/>',ok:'<path d="m7 12 3.5 3.5L17 9"/>'}[level];
+ render(`<div class="verdict ${level}" role="status"><div class="vhead"><span class="vicon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${vi}</svg></span><span class="tag">${tag}</span></div>
+  ${why.length?`<p class="label">Here is why:</p><ul class="reasons">${why.map(w=>`<li>${w}</li>`).join("")}</ul>`:`<p>We did not find the usual warning signs.</p>`}</div>
+ <div class="todo"><h2>What to do now</h2><ol class="steps">${steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
+ <div class="row"><button class="primary" onclick="helperScreen()">Call my helper</button>${level!=="ok"&&lastSource==="text"?`<button class="ghost" onclick="toast('Sender blocked. You will not get texts from them.')">Block this sender</button>`:""}</div>
+ <button class="back" onclick="home()">&larr; Check something else</button>`)}
+
+function helperScreen(){render(`<button class="back" onclick="home()">&larr; Back</button>
+ <h2>Your helper</h2>
+ <div class="helper"><p class="label">${HELPER.name}</p><p class="phone">${HELPER.phone}</p><p style="color:var(--muted)">${HELPER.note}</p></div>
+ <button class="primary" onclick="copyNum(this)">Copy number</button>
+ <p class="lead">You chose who your helper is. Pack Protection never calls anyone for you without asking.</p>`)}
+function copyNum(b){const done=()=>{b.textContent="Number copied";};try{navigator.clipboard.writeText(HELPER.phone).then(done,()=>toast("Write down: "+HELPER.phone))}catch(e){toast("Write down: "+HELPER.phone)}}
+home();
+</script>
+
+</body>
+</html>
